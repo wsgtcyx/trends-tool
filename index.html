@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Trends 仪表板</title>
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3826_RC01/embed_loader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .trend-widget {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Trends 仪表板</h1>
+    <textarea id="keywords" rows="5" cols="50" placeholder="输入关键词,每行一个"></textarea>
+    <button onclick="generateTrends()">生成趋势</button>
+    <div id="trendsContainer"></div>
+
+    <script>
+        function generateTrends() {
+            const keywords = $('#keywords').val().split('\n').filter(k => k.trim() !== '');
+            if (keywords.length > 50) {
+                alert('最多只能输入50个关键词');
+                return;
+            }
+
+            $('#trendsContainer').html('');
+
+            keywords.forEach((keyword, index) => {
+                const widgetDiv = $('<div>').addClass('trend-widget').attr('id', `trend-${index}`);
+                $('#trendsContainer').append(widgetDiv);
+
+                trends.embed.renderExploreWidget("RELATED_QUERIES", {
+                    "comparisonItem": [{
+                        "keyword": keyword.trim(),
+                        "geo": "",
+                        "time": "now 7-d"
+                    }],
+                    "category": 0,
+                    "property": ""
+                }, {
+                    "exploreQuery": `date=now%207-d&q=${encodeURIComponent(keyword.trim())}&hl=zh-CN`,
+                    "guestPath": "https://trends.google.com:443/trends/embed/"
+                }, `trend-${index}`);
+            });
+        }
+    </script>
+</body>
+</html>
